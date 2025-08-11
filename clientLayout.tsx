@@ -9,12 +9,14 @@ import { Toaster } from "@/components/ui/toaster"
 import { usePathname } from "next/navigation"
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const isLoginPage = pathname === "/login"
+  const pathname = usePathname();
+  const isLoginPage = pathname === "/login";
+  const isLandingPage = pathname === "/landing";
+  const isRegistroPage = pathname === "/registro";
 
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
-      {isLoginPage ? (
+      {isLoginPage || isLandingPage || isRegistroPage ? (
         <main className="flex min-h-screen flex-col">{children}</main>
       ) : (
         <SidebarProvider>
@@ -26,5 +28,5 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
         </SidebarProvider>
       )}
     </ThemeProvider>
-  )
+  );
 }

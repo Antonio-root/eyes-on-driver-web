@@ -27,11 +27,9 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
+  <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
       {/* Navbar */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        isScrolled ? "bg-gray-900/95 backdrop-blur-md shadow-lg" : "bg-transparent"
-      }`}>
+  <nav className="fixed top-0 w-full z-50 bg-gray-900 shadow-lg transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
@@ -65,11 +63,13 @@ export default function LandingPage() {
               <Link href="/dashboard" className="text-gray-300 hover:text-white transition-colors">
                 Dashboard
               </Link>
-              <Link href="/login" className="text-gray-300 hover:text-white transition-colors">
+              <Button className="bg-blue-600 hover:bg-blue-700">
+              <Link href="/login">
                 Login
               </Link>
+              </Button>
               <Button className="bg-blue-600 hover:bg-blue-700">
-                Registro
+                <Link href="/registro">Registro</Link>
               </Button>
             </div>
 
@@ -119,8 +119,8 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+  {/* Hero Section */}
+  <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
         {/* Background Animation */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl animate-pulse"></div>

@@ -4,11 +4,12 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Car, Eye, EyeOff } from "lucide-react"
+import { Car, Eye, EyeOff, Link } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import RegistroPage from '../registro/page';
 
 export default function LoginPage() {
   const router = useRouter()
@@ -28,6 +29,11 @@ export default function LoginPage() {
     }, 1500)
   }
 
+  const RegistroPage = async (e: React.FormEvent) =>{
+    e.preventDefault();
+    router.push("/registro");
+  }
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-gray-900 to-gray-950 p-4">
       <div className="w-full max-w-md">
@@ -41,7 +47,7 @@ export default function LoginPage() {
 
         <Card className="border-gray-800 bg-gray-900/50 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle>Iniciar sesión</CardTitle>
+            <CardTitle className="text-center">Iniciar sesión</CardTitle>
             <CardDescription>Ingrese sus credenciales para acceder al sistema</CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
@@ -86,6 +92,13 @@ export default function LoginPage() {
             <CardFooter>
               <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700" disabled={isLoading}>
                 {isLoading ? "Iniciando sesión..." : "Iniciar sesión"}
+              </Button>
+            </CardFooter>
+          </form>
+          <form onSubmit={RegistroPage}>
+          <CardFooter>
+              <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
+                Crear una cuenta
               </Button>
             </CardFooter>
           </form>

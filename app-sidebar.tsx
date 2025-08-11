@@ -70,9 +70,9 @@ export function AppSidebar() {
     <Sidebar variant="sidebar" collapsible="icon">
       <SidebarHeader className="p-4">
         <div className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white">
-            <Car className="h-6 w-6" />
-          </div>
+            <Link href="/landing" className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <Car className="h-6 w-6" />
+            </Link>
           <div className="flex flex-col">
             <span className="font-bold text-lg">EyesOnDriver</span>
             <span className="text-xs text-muted-foreground">Fleet Management</span>
