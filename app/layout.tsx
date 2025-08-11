@@ -1,34 +1,23 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/toaster";
+import type React from "react"
+import "@/app/globals.css"
+import ClientLayout from "../clientLayout"
 
-const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "EyesOnDriver - Fleet Management System",
-  description: "Real-time monitoring system for fleet management",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} bg-gray-950 text-gray-100 min-h-screen`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          storageKey="eyesondriver-theme"
-        >
-          {children}
-          <Toaster />
-        </ThemeProvider>
+    <html lang="es" className="dark">
+      <head>
+        <title>EyesOnDriver</title>
+        <meta name="description" content="Plataforma de monitoreo para empresas de transporte" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </head>
+      <body className="min-h-screen bg-background font-sans antialiased">
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
-  );
+  )
 }
+
+export const metadata = {
+      generator: 'v0.dev'
+    };
