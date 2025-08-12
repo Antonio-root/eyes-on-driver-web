@@ -3,15 +3,20 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { create } from "domain";
+import { createUser } from "@/services/userService";
+import { useRouter } from "next/navigation";
 
 
 export default function RegistroPage() {
+  const router = useRouter();
   const [form, setForm] = useState({
-    nombreCompleto: "",
+    name: "",
     email: "",
-    telefono: "",
-    empresa: "",
-    cargo: "",
+    password: "",
+    phone: "",
+    company: "",
+    title: "",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -22,15 +27,29 @@ export default function RegistroPage() {
     setSuccess("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.nombreCompleto || !form.email || !form.telefono || !form.empresa || !form.cargo) {
+    if (!form.name || !form.email || !form.password || !form.phone || !form.company || !form.title) {
       setError("Todos los campos son obligatorios.");
       return;
     }
-    // Aquí iría la lógica de registro (API call)
-    setSuccess("¡Registro exitoso! Ahora puedes iniciar sesión.");
-    setForm({ nombreCompleto: "", email: "", telefono: "", empresa: "", cargo: "" });
+    await createUser(form)
+      .then(() => {
+        setSuccess("Usuario creado exitosamente.");
+        setForm({
+          name: "",
+          email: "",
+          password: "",
+          phone: "",
+          company: "",
+          title: "",
+        });
+        console.log("Usuario creado exitosamente:");
+        router.push("/dashboard");
+      })
+      .catch((err: { message: string; }) => {
+        setError("Error al crear el usuario: " + err.message);
+      });
   };
 
   return (
@@ -40,12 +59,12 @@ export default function RegistroPage() {
         <h1 className="text-3xl font-bold text-white mb-6 text-center">Crear cuenta</h1>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-gray-300 mb-1" htmlFor="nombreCompleto">Nombre Completo</label>
+            <label className="block text-gray-300 mb-1" htmlFor="name">Nombre Completo</label>
             <input
               type="text"
-              id="nombreCompleto"
-              name="nombreCompleto"
-              value={form.nombreCompleto}
+              id="name"
+              name="name"
+              value={form.name}
               onChange={handleChange}
               className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               autoComplete="off"
@@ -64,36 +83,48 @@ export default function RegistroPage() {
             />
           </div>
           <div>
-            <label className="block text-gray-300 mb-1" htmlFor="telefono">Teléfono</label>
+            <label className="block text-gray-300 mb-1" htmlFor="password">Contraseña</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={form.password}
+              onChange={handleChange}
+              className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              autoComplete="off"
+            />
+          </div>
+          <div>
+            <label className="block text-gray-300 mb-1" htmlFor="phone">Teléfono</label>
             <input
               type="tel"
-              id="telefono"
-              name="telefono"
-              value={form.telefono}
+              id="phone"
+              name="phone"
+              value={form.phone}
               onChange={handleChange}
               className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               autoComplete="off"
             />
           </div>
           <div>
-            <label className="block text-gray-300 mb-1" htmlFor="empresa">Empresa</label>
+            <label className="block text-gray-300 mb-1" htmlFor="company">Empresa</label>
             <input
               type="text"
-              id="empresa"
-              name="empresa"
-              value={form.empresa}
+              id="company"
+              name="company"
+              value={form.company}
               onChange={handleChange}
               className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               autoComplete="off"
             />
           </div>
           <div>
-            <label className="block text-gray-300 mb-1" htmlFor="cargo">Cargo</label>
+            <label className="block text-gray-300 mb-1" htmlFor="title">Cargo</label>
             <input
               type="text"
-              id="cargo"
-              name="cargo"
-              value={form.cargo}
+              id="title"
+              name="title"
+              value={form.title}
               onChange={handleChange}
               className="w-full px-4 py-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               autoComplete="off"
