@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Bell, Lock, Mail, Save, Settings, Shield, Smartphone, User, Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,17 +13,59 @@ import { Separator } from "@/components/ui/separator"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { getAuthenticatedUser, updateUser, deleteUserAccount } from "@/services/userService"
+import { useToast } from "@/use-toast"
+import { User as UserModel } from "@/models/User.model"
 
 export default function ConfiguracionPage() {
-  const [activeTab, setActiveTab] = useState("profile")
+  const { toast } = useToast();
 
-  const [profileSettings, setProfileSettings] = useState({
-    name: "Admin Transportes",
-    email: "admin@empresa.com",
-    phone: "+57 300 123 4567",
-    company: "Transportes EyesOnDriver",
-    position: "Administrador de Flota",
-  })
+  const [user, setUser] = useState<UserModel | null>(null);
+  const [profile, setProfile] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    title: ""
+  });
+
+  useEffect(() => {
+    getAuthenticatedUser()
+      .then((data) => {
+        setUser(data);
+        setProfile({
+          name: data?.name || "",
+          email: data?.email || "",
+          phone: data?.phone || "",
+          company: data?.company || "",
+          title: data?.title || ""
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching authenticated user:", error);
+      })
+  }, []);
+
+  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setProfile((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleSaveProfile = async () => {
+    try {
+      await updateUser({ ...profile, password: "" });
+      alert("Perfil actualizado exitosamente");
+    } catch (error) {
+      console.error("Error al actualizar perfil", error);
+      toast({
+        title: "Error",
+        description: "No se pudo actualizar el perfil.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const [activeTab, setActiveTab] = useState("profile")
 
   const [systemSettings, setSystemSettings] = useState({
     language: "es",
@@ -52,8 +94,25 @@ export default function ConfiguracionPage() {
     ipWhitelist: "",
   })
 
+  async function deleteAccount(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    event.preventDefault();
+    try {
+      await deleteUserAccount();
+      alert("Cuenta eliminada exitosamente");
+      // Opcional: redirigir al login o landing
+      window.location.href = "/landing";
+    } catch (error) {
+      console.error("Error al eliminar cuenta", error);
+      toast({
+        title: "Error",
+        description: "No se pudo eliminar la cuenta.",
+        variant: "destructive",
+      });
+    }
+  }
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col 300-h-screen">
       <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 sm:px-6">
         <SidebarTrigger />
         <div className="flex flex-1 items-center gap-4 md:gap-8">
@@ -97,10 +156,7 @@ export default function ConfiguracionPage() {
                 <div className="flex items-center gap-6">
                   <Avatar className="h-20 w-20">
                     <AvatarFallback className="bg-blue-600 text-white text-xl">
-                      {profileSettings.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
+                      {user?.name ?? "No disponible"}
                     </AvatarFallback>
                   </Avatar>
                   <div className="space-y-2">
@@ -116,8 +172,8 @@ export default function ConfiguracionPage() {
                     <Label htmlFor="name">Nombre completo</Label>
                     <Input
                       id="name"
-                      value={profileSettings.name}
-                      onChange={(e) => setProfileSettings((prev) => ({ ...prev, name: e.target.value }))}
+                      value={profile.name}
+                      onChange={handleProfileChange}
                     />
                   </div>
                   <div className="space-y-2">
@@ -125,40 +181,46 @@ export default function ConfiguracionPage() {
                     <Input
                       id="email"
                       type="email"
-                      value={profileSettings.email}
-                      onChange={(e) => setProfileSettings((prev) => ({ ...prev, email: e.target.value }))}
+                      value={profile.email}
+                      onChange={handleProfileChange}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="phone">Teléfono</Label>
                     <Input
                       id="phone"
-                      value={profileSettings.phone}
-                      onChange={(e) => setProfileSettings((prev) => ({ ...prev, phone: e.target.value }))}
+                      value={profile.phone}
+                      onChange={handleProfileChange}
                     />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="company">Empresa</Label>
                     <Input
                       id="company"
-                      value={profileSettings.company}
-                      onChange={(e) => setProfileSettings((prev) => ({ ...prev, company: e.target.value }))}
+                      value={profile.company}
+                      onChange={handleProfileChange}
                     />
                   </div>
                   <div className="space-y-2 md:col-span-2">
                     <Label htmlFor="position">Cargo</Label>
                     <Input
-                      id="position"
-                      value={profileSettings.position}
-                      onChange={(e) => setProfileSettings((prev) => ({ ...prev, position: e.target.value }))}
+                      id="title"
+                      value={profile.title}
+                      onChange={handleProfileChange}
                     />
                   </div>
                 </div>
 
                 <div className="flex justify-end">
-                  <Button className="bg-blue-600 hover:bg-blue-700">
+                  <Button className="bg-blue-600 hover:bg-blue-700" onClick={handleSaveProfile}>
                     <Save className="h-4 w-4 mr-2" />
                     Guardar cambios
+                  </Button>
+                </div>
+                <div className="flex justify-end">
+                  <Button variant="destructive" className="mt-4" onClick={deleteAccount}>
+                    <Lock className="h-4 w-4 mr-2" />
+                    Eliminar cuenta
                   </Button>
                 </div>
               </CardContent>
@@ -301,7 +363,6 @@ export default function ConfiguracionPage() {
                       id="drowsiness"
                       type="number"
                       value={alertSettings.drowsinessThreshold}
-                      onChange={(e) => setAlertSettings((prev) => ({ ...prev, drowsinessThreshold: e.target.value }))}
                     />
                     <p className="text-xs text-muted-foreground">Tiempo con ojos cerrados para activar alerta</p>
                   </div>
@@ -311,7 +372,6 @@ export default function ConfiguracionPage() {
                       id="distraction"
                       type="number"
                       value={alertSettings.distractionThreshold}
-                      onChange={(e) => setAlertSettings((prev) => ({ ...prev, distractionThreshold: e.target.value }))}
                     />
                     <p className="text-xs text-muted-foreground">Tiempo mirando fuera de la carretera</p>
                   </div>
@@ -321,7 +381,6 @@ export default function ConfiguracionPage() {
                       id="speed"
                       type="number"
                       value={alertSettings.speedThreshold}
-                      onChange={(e) => setAlertSettings((prev) => ({ ...prev, speedThreshold: e.target.value }))}
                     />
                     <p className="text-xs text-muted-foreground">Velocidad máxima permitida</p>
                   </div>
@@ -497,7 +556,6 @@ export default function ConfiguracionPage() {
                     id="ipWhitelist"
                     placeholder="192.168.1.1&#10;10.0.0.1&#10;..."
                     value={securitySettings.ipWhitelist}
-                    onChange={(e) => setSecuritySettings((prev) => ({ ...prev, ipWhitelist: e.target.value }))}
                     className="min-h-[100px]"
                   />
                   <p className="text-sm text-muted-foreground">

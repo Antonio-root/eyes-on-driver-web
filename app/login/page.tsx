@@ -10,8 +10,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import RegistroPage from '../registro/page';
+import { loginUser } from "@/services/userService"
 
 export default function LoginPage() {
+  
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -19,14 +21,22 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+     e.preventDefault();
 
-    // Simulación de login
-    setTimeout(() => {
-      setIsLoading(false)
-      router.push("/dashboard")
-    }, 1500)
+  try {
+    console.log("Email:", email);
+    console.log("Password:", password);           
+
+    const { token } = await loginUser(email, password);
+
+    console.log("Token recibido:", token);
+    // Redirigir a la página de perfil
+    window.location.href = "/configuracion";
+    
+    } catch (err) {
+      console.error("Error en login", err);
+      alert("Credenciales incorrectas");
+    }
   }
 
   const RegistroPage = async (e: React.FormEvent) =>{

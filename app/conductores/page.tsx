@@ -13,6 +13,7 @@ import {
   Clock,
   Phone,
   Mail,
+  Plus,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -22,9 +23,18 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
 
 export default function ConductoresPage() {
   const [searchQuery, setSearchQuery] = useState("")
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [newDriver, setNewDriver] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    vehicle: "",
+  })
 
   const drivers = [
     {
@@ -142,6 +152,20 @@ export default function ConductoresPage() {
     return "text-red-500"
   }
 
+  const handleAddDriver = (e: React.FormEvent) => {
+    e.preventDefault()
+    // Aquí se agregaría la lógica para guardar el conductor
+    console.log("Nuevo conductor:", newDriver)
+    // Resetear formulario y cerrar dialog
+    setNewDriver({ name: "", email: "", phone: "", vehicle: "" })
+    setIsAddDialogOpen(false)
+    // Mostrar mensaje de éxito (opcional)
+  }
+
+  const handleInputChange = (field: string, value: string) => {
+    setNewDriver((prev) => ({ ...prev, [field]: value }))
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 sm:px-6">
@@ -220,6 +244,90 @@ export default function ConductoresPage() {
                   <Download className="h-4 w-4 mr-2" />
                   Exportar
                 </Button>
+                <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button size="sm" className="h-9 bg-blue-600 hover:bg-blue-700">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Agregar
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-[425px] bg-gray-900 border-gray-800">
+                    <DialogHeader>
+                      <DialogTitle className="text-white">Agregar Nuevo Conductor</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={handleAddDriver} className="space-y-4 mt-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="name" className="text-white">
+                          Nombre completo
+                        </Label>
+                        <Input
+                          id="name"
+                          type="text"
+                          placeholder="Ej: Carlos Rodríguez"
+                          value={newDriver.name}
+                          onChange={(e) => handleInputChange("name", e.target.value)}
+                          className="bg-gray-800 border-gray-700 text-white"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="email" className="text-white">
+                          Correo electrónico
+                        </Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="Ej: carlos.rodriguez@empresa.com"
+                          value={newDriver.email}
+                          onChange={(e) => handleInputChange("email", e.target.value)}
+                          className="bg-gray-800 border-gray-700 text-white"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="phone" className="text-white">
+                          Teléfono
+                        </Label>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          placeholder="Ej: +57 300 123 4567"
+                          value={newDriver.phone}
+                          onChange={(e) => handleInputChange("phone", e.target.value)}
+                          className="bg-gray-800 border-gray-700 text-white"
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="vehicle" className="text-white">
+                          Vehículo asignado
+                        </Label>
+                        <Input
+                          id="vehicle"
+                          type="text"
+                          placeholder="Ej: ABC-123"
+                          value={newDriver.vehicle}
+                          onChange={(e) => handleInputChange("vehicle", e.target.value)}
+                          className="bg-gray-800 border-gray-700 text-white"
+                          required
+                        />
+                      </div>
+                      <div className="flex justify-end gap-2 pt-4">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setIsAddDialogOpen(false)}
+                          className="bg-transparent border-gray-700 text-white hover:bg-gray-800"
+                        >
+                          Cancelar
+                        </Button>
+                        <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white">
+                          Agregar Conductor
+                        </Button>
+                      </div>
+                    </form>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
 

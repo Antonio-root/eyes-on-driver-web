@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { getAuthenticatedUser } from "./services/userService"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { AlertTriangle, Bell, Car, ChevronDown, Clock, Home, LogOut, Map, Settings, Users } from "lucide-react"
@@ -64,7 +65,32 @@ export function AppSidebar() {
       href: "/configuracion",
       icon: Settings,
     },
+    {
+      title: "Cerrar Sesión",
+      href: "/logout",
+      icon: LogOut,
+    },
   ]
+
+  // Estado para usuario en sesión
+  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  useEffect(() => {
+    getAuthenticatedUser()
+      .then((user) => {
+        setUser({ name: user.name, email: user.email });
+      })
+      .catch(() => setUser(null));
+  }, []);
+
+  // Handlers para acciones del menú
+  const handleGoToConfig = () => {
+    window.location.href = "/configuracion";
+  };
+  const handleLogout = () => {
+    if (typeof window !== "undefined") {
+      window.location.href = "/logout";
+    }
+  };
 
   return (
     <Sidebar variant="sidebar" collapsible="icon">
@@ -99,26 +125,28 @@ export function AppSidebar() {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="w-full justify-start gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white">
-                <span className="text-sm font-medium">AT</span>
+                <span className="text-sm font-medium">
+                  {user?.name ? user.name[0] : "?"}
+                </span>
               </div>
               <div className="flex flex-col items-start">
-                <span className="text-sm font-medium">Admin Transportes</span>
-                <span className="text-xs text-muted-foreground">admin@empresa.com</span>
+                <span className="text-sm font-medium">{user?.name ?? "Usuario"}</span>
+                <span className="text-xs text-muted-foreground">{user?.email ?? "correo@empresa.com"}</span>
               </div>
               <ChevronDown className="ml-auto h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[200px]">
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleGoToConfig}>
               <Settings className="mr-2 h-4 w-4" />
               <span>Perfil</span>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleGoToConfig}>
               <Clock className="mr-2 h-4 w-4" />
               <span>Actividad</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-500 focus:text-red-500">
+            <DropdownMenuItem className="text-red-500 focus:text-red-500" onClick={handleLogout}>
               <LogOut className="mr-2 h-4 w-4" />
               <span>Cerrar sesión</span>
             </DropdownMenuItem>

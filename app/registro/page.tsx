@@ -45,7 +45,7 @@ export default function RegistroPage() {
           title: "",
         });
         console.log("Usuario creado exitosamente:");
-        router.push("/dashboard");
+        router.push("/login");
       })
       .catch((err: { message: string; }) => {
         setError("Error al crear el usuario: " + err.message);
