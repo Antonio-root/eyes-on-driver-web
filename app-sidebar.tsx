@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { getAuthenticatedUser } from "./services/userService"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { AlertTriangle, Bell, Car, ChevronDown, Clock, Home, LogOut, Map, Settings, Users } from "lucide-react"
+import { AlertTriangle, Bell, Camera, Car, ChevronDown, Clock, Home, LogOut, Map, Settings, Users } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -38,6 +38,12 @@ export function AppSidebar() {
       title: "Vehículos",
       href: "/vehiculos",
       icon: Car,
+    },
+    {
+      title: "Fotos",
+      href: "/fotos",
+      icon: Camera,
+      badge: 3, // Example badge count for photos
     },
     {
       title: "Conductores",

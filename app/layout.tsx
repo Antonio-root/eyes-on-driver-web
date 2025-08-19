@@ -9,7 +9,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <title>EyesOnDriver</title>
         <meta name="description" content="Plataforma de monitoreo para empresas de transporte" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="../public/favicon.ico" />
       </head>
       <body className="min-h-screen bg-background font-sans antialiased">
         <ClientLayout>{children}</ClientLayout>

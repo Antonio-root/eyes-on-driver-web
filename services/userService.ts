@@ -1,6 +1,6 @@
 import {User} from "../models/User.model";
 
-const API_URL = 'http://localhost:8080';
+const API_URL = 'api/';
 
 //GET all users
 export const getUsers = async (): Promise<User[]> => {
